@@ -3,6 +3,7 @@
 /application-DB-KEY.properties
 /src/main/resources/application-DB-KEY.properties
 /src/main/resources/minography-7d7a8702ce77.json
+src/main/resources/*.json
 
 # Gradle 관련 파일 무시
 .gradle
