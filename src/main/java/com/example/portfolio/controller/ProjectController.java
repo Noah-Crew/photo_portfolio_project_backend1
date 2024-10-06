@@ -1,7 +1,6 @@
 package com.example.portfolio.controller;
 
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +13,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.portfolio.dto.CategoryDto;
-import com.example.portfolio.dto.ThumbnailCreateDTO;
+import com.example.portfolio.dto.ProjectCreateDto;
+import com.example.portfolio.dto.ProjectUpdateDto;
+import com.example.portfolio.dto.ThumbnailCreateDto;
 import com.example.portfolio.model.Admin;
 import com.example.portfolio.model.Category;
 import com.example.portfolio.service.AdminService;
 import com.example.portfolio.service.CategoryService;
 import com.example.portfolio.service.ProjectService;
 import com.example.portfolio.service.ThumbnailService;
+
 
 
 @RestController
@@ -75,35 +76,57 @@ public class ProjectController {
     }
 
 	
-	@GetMapping("/category")
+	@GetMapping("/category") 
 	public List<Category> getCategory() {
 		return categoryService.getCategory();
 	}
 	
-	// 썸네일 저장
+	// 썸네일 저장 
 	@PostMapping("/thumbnail")
-	public void saveThumbnail(ThumbnailCreateDTO thumbnailCreateDTO) {
+	public void saveThumbnail(ThumbnailCreateDto thumbnailCreateDTO) {
 		thumbnailService.insertThumbnail(thumbnailCreateDTO);
 	}
 	
 	// 썸네일 불러오기
 	@GetMapping("/thumbnail")
-	public void getThumbnail(ThumbnailCreateDTO thumbnailCreateDTO) {
+	public void getThumbnail(ThumbnailCreateDto thumbnailCreateDTO) {
 		//TODO: GCP에서 사진 받아오는 로직 구현해야함
 		thumbnailService.insertThumbnail(thumbnailCreateDTO);
-		
-		
 	}
 	
 	// 썸네일 업데이트
 	@PatchMapping("/thumbnail/{id}")
-	public void updateThumbnail(ThumbnailCreateDTO thumbnailCreateDTO, @PathVariable("id") Long id) {
+	public void updateThumbnail(ThumbnailCreateDto thumbnailCreateDTO, @PathVariable("id") Long id) {
 		
 		thumbnailService.updateThumbnail(thumbnailCreateDTO, id);
 	}
 	
+	// 썸네일 삭제
+	@DeleteMapping("/thumbnail/{id}")
+	public void deleteThumbnail(@PathVariable("id") Long id) {
+		thumbnailService.deleteThumbnail(id);
+	}
 
-
+	// 프로젝트 저장
+	@PostMapping("/project")
+	public void saveProject(ProjectCreateDto projectCreateDTO) {
+		projectService.insertProject(projectCreateDTO);
+	}
+	
+	// 프로젝트 불러오기
+	
+	// 프로젝트 업데이트
+	@PutMapping("/project")
+	public void updateProject(ProjectUpdateDto projectUpdateDto) {
+		projectService.updateProject(projectUpdateDto);
+		
+	}
+	
+	// 프로젝트 삭제
+	@DeleteMapping("/project/{id}")
+	public void deleteProject(@PathVariable("id") Long id) {
+		projectService.deleteProject(id); 
+	}
 	
 
 }
