@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -12,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.portfolio.dto.ThumbnailCreateDto;
 import com.example.portfolio.model.Thumbnail;
-import com.example.portfolio.repository.ProjectRepository;
 import com.example.portfolio.repository.ThumbnailRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.BlobInfo;
