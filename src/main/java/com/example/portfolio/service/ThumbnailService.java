@@ -25,8 +25,11 @@ import jakarta.transaction.Transactional;
 public class ThumbnailService {
 	
 	// 여기서 생성자 주입을 하지 않고 필드 주입을 하는게 좋은건지?
-	@Autowired
 	private ThumbnailRepository thumbnailRepository;
+	
+	public ThumbnailService(ThumbnailRepository thumbnailRepository) {
+		this.thumbnailRepository = thumbnailRepository;
+	}
 
 	@Value("${spring.cloud.gcp.storage.credentials.location}") 
     private String keyFileName;

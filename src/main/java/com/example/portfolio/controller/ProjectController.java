@@ -3,7 +3,6 @@ package com.example.portfolio.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,7 +30,6 @@ import com.example.portfolio.service.ThumbnailService;
 @RequestMapping("/api")
 public class ProjectController {
 
-	@Autowired
 	private CategoryService categoryService;
 	private ProjectService projectService;
 	private ThumbnailService thumbnailService;
@@ -114,6 +112,10 @@ public class ProjectController {
 	}
 	
 	// 프로젝트 불러오기
+	@GetMapping("/project")
+	public void getProject() {
+		projectService.getProject();
+	}
 	
 	// 프로젝트 업데이트
 	@PutMapping("/project")

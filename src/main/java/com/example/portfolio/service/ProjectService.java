@@ -69,51 +69,53 @@ public class ProjectService {
 		}
 	}
 	
-	// 프로젝트 불러오기
-	
 	// 프로젝트 업데이트
 	@Transactional
 	public void updateProject(ProjectUpdateDto projectUpdateDto) {
+		
 		// 프로젝트 객체 생성
-			Project project = new Project();
-			project.setTitle(projectUpdateDto.getTitle());
+		Project project = new Project();
+		project.setTitle(projectUpdateDto.getTitle());
+		
+		// 카테고리 이름 검색
+		Category category = categoryRepository.findById(projectUpdateDto.getCategoryId()).get();
+		project.setCategory(category);
+		
+		// 서브 카테고리 이름 검색
+		SubCategory subCategory = subCategoryRepository.findById(projectUpdateDto.getSubcategoryId()).get();
+		project.setSubCategory(subCategory);
+		
+		// 새로 받아온 사진들
+		MultipartFile[] multipartFiles = projectUpdateDto.getMultipartFiles();
+		
+		// 프로젝트 아이디로 맞는 사진 전체 불러오기
+		List<Photo> existingPhotos = photoRepository.findByProjectId(projectUpdateDto.getId());
+		
+		// 새로운 사진 저장 및 이미있는 사진 건너뛰기
+		for(MultipartFile multipartFile : multipartFiles) {
+			Photo newPhoto = createPhoto(multipartFile, projectUpdateDto.getId());
 			
-			// 카테고리 이름 검색
-			Category category = categoryRepository.findById(projectUpdateDto.getCategoryId()).get();
-			project.setCategory(category);
-			
-			// 서브 카테고리 이름 검색
-			SubCategory subCategory = subCategoryRepository.findById(projectUpdateDto.getSubcategoryId()).get();
-			project.setSubCategory(subCategory);
-			
-			// 새로 받아온 사진들
-			MultipartFile[] multipartFiles = projectUpdateDto.getMultipartFiles();
-			
-			// 프로젝트 아이디로 맞는 사진 전체 불러오기
-			List<Photo> existingPhotos = photoRepository.findByProjectId(projectUpdateDto.getId());
-			
-			
-			// 새로운 사진 저장 및 이미있는 사진 건너뛰기
-			for(MultipartFile multipartFile : multipartFiles) {
-				Photo newPhoto = createPhoto(multipartFile, projectUpdateDto.getId());
-				
-				// 기존에 없는 사진만 통과
-				if(existingPhotos.stream().noneMatch(p -> p.equals(newPhoto))) {
-					// 새로운 사진 저장
-					// TODO : gcs에 저장 및 위치 저장 imageUrl 저장
-					photoRepository.save(newPhoto);
-				}
+			// 기존에 없는 사진만 통과
+			if(existingPhotos.stream().noneMatch(p -> p.equals(newPhoto))) {
+				// 새로운 사진 저장
+				// TODO : gcs에 저장 및 위치 저장 imageUrl 저장
+				photoRepository.save(newPhoto);
 			}
+		}
+		
+		// 삭제된 사진 처리
+		List<Photo> deletePhotos = existingPhotos.stream()
+        .filter(existingPhoto -> Arrays.stream(multipartFiles)
+                .map(file -> createPhoto(file, project.getId()))
+                .noneMatch(newPhoto -> newPhoto.equals(existingPhoto)))
+        .collect(Collectors.toList());
 			
-			// 삭제된 사진 처리
-			List<Photo> deletePhotos = existingPhotos.stream()
-	        .filter(existingPhoto -> Arrays.stream(multipartFiles)
-	                .map(file -> createPhoto(file, project.getId()))
-	                .noneMatch(newPhoto -> newPhoto.equals(existingPhoto)))
-	        .collect(Collectors.toList());
+		photoRepository.deleteAll(deletePhotos);
 			
-			photoRepository.deleteAll(deletePhotos);
-			
+		
+	}
+	
+	public void getProject() {
 		
 	}
 	
@@ -131,5 +133,6 @@ public class ProjectService {
 		photo.setImgtype(file.getContentType());
 		return photo;
 	}
+
 
 }
